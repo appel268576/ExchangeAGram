@@ -89,11 +89,11 @@
 				6F7480981A10FBF000802F6F /* AppDelegate.swift */,
 				6F7480BB1A10FDA600802F6F /* FeedViewController.swift */,
 				6F7480BD1A11014F00802F6F /* FeedCell.swift */,
+				6FB625FB1A13496300F6C396 /* FeedItem.swift */,
 				6F74809F1A10FBF100802F6F /* Main.storyboard */,
 				6F7480A21A10FBF100802F6F /* Images.xcassets */,
 				6F7480A41A10FBF100802F6F /* LaunchScreen.xib */,
 				6F74809A1A10FBF000802F6F /* ExchangeAGram.xcdatamodeld */,
-				6FB625FB1A13496300F6C396 /* FeedItem.swift */,
 				6F7480961A10FBF000802F6F /* Supporting Files */,
 			);
 			path = ExchangeAGram;
