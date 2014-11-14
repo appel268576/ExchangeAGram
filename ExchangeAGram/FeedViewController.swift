@@ -87,6 +87,15 @@ class FeedViewController: UIViewController, UICollectionViewDataSource, UICollec
     
     //UICollectionViewDelegate
     
+    func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
+        let thisItem = feedArray[indexPath.row] as FeedItem
+        
+        var filterVC = FilterViewController()
+        filterVC.thisFeedItem = thisItem
+        
+        self.navigationController?.pushViewController(filterVC, animated: false)
+    }
+    
     //UIImagePickerControllerDelegate
     
     func imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [NSObject : AnyObject]) {
@@ -94,6 +103,7 @@ class FeedViewController: UIViewController, UICollectionViewDataSource, UICollec
         let image = info[UIImagePickerControllerOriginalImage] as UIImage
         
         let imageData = UIImageJPEGRepresentation(image, 1.0)
+        let thumbNailData = UIImageJPEGRepresentation(image, 0.1)
         
         //Set up Core Date reference
         let managedObjectContext = (UIApplication.sharedApplication().delegate as AppDelegate).managedObjectContext
@@ -102,8 +112,8 @@ class FeedViewController: UIViewController, UICollectionViewDataSource, UICollec
         
         //Set properties
         feedItem.image = imageData
-        feedItem.caption = "Arno"
-        
+        feedItem.caption = "Test caption"
+        feedItem.thumbnail = thumbNailData
         
         //save to Core Data
         (UIApplication.sharedApplication().delegate as AppDelegate).saveContext()
