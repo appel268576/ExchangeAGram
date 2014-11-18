@@ -36,6 +36,11 @@ class FeedViewController: UIViewController, UICollectionViewDataSource, UICollec
         // Dispose of any resources that can be recreated.
     }
     
+    
+    @IBAction func profileTapped(sender: UIBarButtonItem) {
+        self.performSegueWithIdentifier("profileSegue", sender: nil)
+    }
+    
     @IBAction func snapBarButtonItemTapped(sender: UIBarButtonItem) {
         
         let imagePickerContoller = UIImagePickerController()

@@ -127,6 +127,47 @@ class FilterViewController: UIViewController, UICollectionViewDataSource, UIColl
     // UICollectionView Delegate
     
     func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
+        createUIAlertController(indexPath)
+    }
+    
+    
+    // UIAlertController Helper functions
+    
+    func createUIAlertController(indexPath: NSIndexPath) {
+        let alert = UIAlertController(title: "Photo options", message: "Please choose an option", preferredStyle: UIAlertControllerStyle.Alert)
+        alert.addTextFieldWithConfigurationHandler { (textField) -> Void in
+            textField.placeholder = "Add caption!"
+            textField.secureTextEntry = false
+        }
+        
+        var text:String
+        let textField = alert.textFields![0] as UITextField
+        
+        if textField.text != nil {
+            text = textField.text
+        }
+        
+        let photoAction = UIAlertAction(title: "Post photo to facebook with caption", style: UIAlertActionStyle.Destructive) { (UIAlertAction) -> Void in
+            self.saveFilterToCoreData(indexPath)
+        }
+        alert.addAction(photoAction)
+        
+        let saveFilterAction = UIAlertAction(title: "Save filter without posting to Facebook", style: UIAlertActionStyle.Default) { (UIAlertAction) -> Void in
+            self.saveFilterToCoreData(indexPath)
+        }
+        alert.addAction(saveFilterAction)
+        
+        let cancelAction = UIAlertAction(title: "Select another filter", style: UIAlertActionStyle.Cancel) { (UIAlertAction) -> Void in
+            
+        }
+        alert.addAction(cancelAction)
+        
+        self.presentViewController(alert, animated: true, completion: nil)
+    }
+    
+    // 
+    
+    func saveFilterToCoreData(indexPath: NSIndexPath) {
         let filterImage = self.filteredImageFromImage(self.thisFeedItem.image, filter: self.filters[indexPath.row])
         
         let imageData = UIImageJPEGRepresentation(filterImage, 1.0)
@@ -137,6 +178,24 @@ class FilterViewController: UIViewController, UICollectionViewDataSource, UIColl
         (UIApplication.sharedApplication().delegate as AppDelegate).saveContext()
         
         self.navigationController?.popViewControllerAnimated(true)
+    }
+    
+    // share to facebook
+    func shareToFacebook(indexPath: NSIndexPath) {
+        let filterImage = self.filteredImageFromImage(self.thisFeedItem.image, filter: self.filters[indexPath.row])
+        
+        // creating array since we're using objective C
+        let photos:NSArray = [filterImage]
+        var params = FBPhotoParams()
+        params.photos = photos
+        
+        FBDialogs.presentShareDialogWithPhotoParams(params, clientState: nil) { (callback, result, error) -> Void in
+            if (result? != nil) {
+                println(result)
+            } else {
+                println(error)
+            }
+        }
     }
     
     
