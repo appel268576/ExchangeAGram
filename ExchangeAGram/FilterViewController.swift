@@ -20,6 +20,10 @@ class FilterViewController: UIViewController, UICollectionViewDataSource, UIColl
     
     var filters:[CIFilter] = []
     
+    let placeHolderImage = UIImage(named: "Placeholder")
+    
+    let tmp = NSTemporaryDirectory()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -52,12 +56,12 @@ class FilterViewController: UIViewController, UICollectionViewDataSource, UIColl
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
         let cell:FilterCell = collectionView.dequeueReusableCellWithReuseIdentifier("MyCell", forIndexPath: indexPath) as FilterCell
         
-        cell.imageView.image = UIImage(named: "Placeholder")
+        cell.imageView.image = placeHolderImage
         
         let filterQueue:dispatch_queue_t = dispatch_queue_create("filter queue", nil)
         
         dispatch_async(filterQueue, { () -> Void in
-            let filterImage = self.filteredImageFromImage(self.thisFeedItem.thumbnail, filter: self.filters[indexPath.row])
+            let filterImage = self.getCahcedImage(indexPath.row)
             
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
                 cell.imageView.image = filterImage
@@ -118,6 +122,113 @@ class FilterViewController: UIViewController, UICollectionViewDataSource, UIColl
         let finalImage = UIImage(CGImage: cgImage)
         
         return finalImage!
+    }
+    
+    // UICollectionView Delegate
+    
+    func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
+        createUIAlertController(indexPath)
+    }
+    
+    
+    // UIAlertController Helper functions
+    
+    func createUIAlertController(indexPath: NSIndexPath) {
+        let alert = UIAlertController(title: "Photo options", message: "Please choose an option", preferredStyle: UIAlertControllerStyle.Alert)
+        alert.addTextFieldWithConfigurationHandler { (textField) -> Void in
+            textField.placeholder = "Add caption!"
+            textField.secureTextEntry = false
+        }
+        
+        var text:String
+        let textField = alert.textFields![0] as UITextField
+        
+        if textField.text != nil {
+            text = textField.text
+        }
+        
+        let photoAction = UIAlertAction(title: "Post photo to facebook with caption", style: UIAlertActionStyle.Destructive) { (UIAlertAction) -> Void in
+            self.saveFilterToCoreData(indexPath)
+        }
+        alert.addAction(photoAction)
+        
+        let saveFilterAction = UIAlertAction(title: "Save filter without posting to Facebook", style: UIAlertActionStyle.Default) { (UIAlertAction) -> Void in
+            self.saveFilterToCoreData(indexPath)
+        }
+        alert.addAction(saveFilterAction)
+        
+        let cancelAction = UIAlertAction(title: "Select another filter", style: UIAlertActionStyle.Cancel) { (UIAlertAction) -> Void in
+            
+        }
+        alert.addAction(cancelAction)
+        
+        self.presentViewController(alert, animated: true, completion: nil)
+    }
+    
+    // 
+    
+    func saveFilterToCoreData(indexPath: NSIndexPath) {
+        let filterImage = self.filteredImageFromImage(self.thisFeedItem.image, filter: self.filters[indexPath.row])
+        
+        let imageData = UIImageJPEGRepresentation(filterImage, 1.0)
+        self.thisFeedItem.image = imageData
+        let thumbNailData = UIImageJPEGRepresentation(filterImage, 0.1)
+        self.thisFeedItem.thumbnail = thumbNailData
+        
+        (UIApplication.sharedApplication().delegate as AppDelegate).saveContext()
+        
+        self.navigationController?.popViewControllerAnimated(true)
+    }
+    
+    // share to facebook
+    func shareToFacebook(indexPath: NSIndexPath) {
+        let filterImage = self.filteredImageFromImage(self.thisFeedItem.image, filter: self.filters[indexPath.row])
+        
+        // creating array since we're using objective C
+        let photos:NSArray = [filterImage]
+        var params = FBPhotoParams()
+        params.photos = photos
+        
+        FBDialogs.presentShareDialogWithPhotoParams(params, clientState: nil) { (callback, result, error) -> Void in
+            if (result? != nil) {
+                println(result)
+            } else {
+                println(error)
+            }
+        }
+    }
+    
+    
+    // caching function
+    
+    func cacheImage(imageNumber: Int) {
+        let fileName = "\(imageNumber)"
+        let uniquePath = tmp.stringByAppendingPathComponent(fileName)
+        
+        if !NSFileManager.defaultManager().fileExistsAtPath(fileName) {
+            let data = self.thisFeedItem.thumbnail
+            let filter = self.filters[imageNumber]
+            let image = filteredImageFromImage(data, filter: filter)
+            
+            UIImageJPEGRepresentation(image, 1.0).writeToFile(uniquePath, atomically: true)
+        }
+    }
+    
+    
+    func getCahcedImage(imageNumber: Int) -> UIImage {
+        let fileName = "\(imageNumber)"
+        let uniquePath = tmp.stringByAppendingPathComponent(fileName)
+        
+        var image:UIImage
+        
+        if NSFileManager.defaultManager().fileExistsAtPath(uniquePath) {
+            image = UIImage(contentsOfFile: uniquePath)!
+        } else {
+            self.cacheImage(imageNumber)
+            image = UIImage(contentsOfFile: uniquePath)!
+        }
+        
+        return image
     }
 
 }

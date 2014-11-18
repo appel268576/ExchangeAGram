@@ -20,7 +20,9 @@ class FeedViewController: UIViewController, UICollectionViewDataSource, UICollec
         super.viewDidLoad()
         
         // Do any additional setup after loading the view.
-        
+    }
+    
+    override func viewDidAppear(animated: Bool) {
         let request = NSFetchRequest(entityName: "FeedItem")
         let appDelegate:AppDelegate = (UIApplication.sharedApplication().delegate as AppDelegate)
         let context:NSManagedObjectContext = appDelegate.managedObjectContext!
@@ -34,12 +36,18 @@ class FeedViewController: UIViewController, UICollectionViewDataSource, UICollec
         // Dispose of any resources that can be recreated.
     }
     
+    
+    @IBAction func profileTapped(sender: UIBarButtonItem) {
+        self.performSegueWithIdentifier("profileSegue", sender: nil)
+    }
+    
     @IBAction func snapBarButtonItemTapped(sender: UIBarButtonItem) {
         
         let imagePickerContoller = UIImagePickerController()
         var presentableController: UIViewController = imagePickerContoller
         let mediaTypes:[AnyObject] = [kUTTypeImage]
         imagePickerContoller.mediaTypes = mediaTypes
+        imagePickerContoller.delegate = self
         imagePickerContoller.allowsEditing = false
         
         if UIImagePickerController.isSourceTypeAvailable(UIImagePickerControllerSourceType.Camera) {
@@ -112,7 +120,7 @@ class FeedViewController: UIViewController, UICollectionViewDataSource, UICollec
         
         //Set properties
         feedItem.image = imageData
-        feedItem.caption = "Test caption"
+        feedItem.caption = "Test 1 caption"
         feedItem.thumbnail = thumbNailData
         
         //save to Core Data
