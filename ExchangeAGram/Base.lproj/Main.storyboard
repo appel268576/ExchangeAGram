@@ -105,6 +105,17 @@
                                 <rect key="frame" x="50" y="400" width="200" height="50"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                             </view>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="sfJ-MU-ZvT">
+                                <rect key="frame" x="20" y="194" width="140" height="30"/>
+                                <color key="backgroundColor" red="0.40000000596046448" green="0.80000001192092896" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                <fontDescription key="fontDescription" name="HelveticaNeue-Bold" family="Helvetica Neue" pointSize="15"/>
+                                <state key="normal" title="Map View">
+                                    <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                </state>
+                                <connections>
+                                    <action selector="mapViewButtonTapped:" destination="TXq-TA-hg4" eventType="touchUpInside" id="jaj-JE-RuH"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
@@ -112,11 +123,38 @@
                         <outlet property="fbLoginView" destination="Voe-yg-EvD" id="XHC-sm-LkV"/>
                         <outlet property="nameLabel" destination="K9Q-Ty-ArI" id="5HS-6W-lcb"/>
                         <outlet property="profileImageView" destination="0IQ-YW-tSt" id="hmS-cH-fHV"/>
+                        <segue destination="AsB-at-Fmo" kind="show" identifier="mapSegue" id="y7H-Sm-9Jq"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="q9y-bB-lje" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1798" y="365"/>
+        </scene>
+        <!--Map View Controller-->
+        <scene sceneID="odA-Fk-SLz">
+            <objects>
+                <viewController id="AsB-at-Fmo" customClass="MapViewController" customModule="ExchangeAGram" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="bBl-J9-DhG"/>
+                        <viewControllerLayoutGuide type="bottom" id="oIw-og-UPn"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="aAY-Ay-4JH">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="bwz-WK-4ac">
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                            </mapView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                    <connections>
+                        <outlet property="mapView" destination="bwz-WK-4ac" id="hh5-iT-udB"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="8O3-gN-Uyf" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2455" y="365"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="AHK-vt-xfi">
